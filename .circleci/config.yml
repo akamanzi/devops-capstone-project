@@ -29,6 +29,10 @@ jobs:
           keys: 
           - v1-dependencies-{{ checksum "requirements.txt" }}
           - v1-dependencies-
+      - run:
+          name: activate environment
+          command: |
+            . venv/bin/activate
       - run: 
           name: run lint
           command: |
@@ -43,6 +47,10 @@ jobs:
           keys: 
           - v1-dependencies-{{ checksum "requirements.txt" }}
           - v1-dependencies-
+      - run:
+          name: activate environment
+          command: |
+            . venv/bin/activate
       - run: 
           name: run tests
           command: |
