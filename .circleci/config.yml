@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  install-requirements:
+  build:
     docker:
       - image: python:3.7.3-stretch
     steps:
@@ -19,40 +19,10 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies{{ checksum "requirements.txt" }}
-
-  run-lint:
-    docker:
-      - image: python:3.7.3-stretch
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          - v1-dependencies-
-      - run:
-          name: activate environment
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
       - run: 
           name: run lint
           command: |
             make lint
-  
-  run-tests:
-    docker:
-      - image: python:3.7.3-stretch
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          - v1-dependencies-
-      - run:
-          name: activate environment
-          command: |
-            ls -la
-            . venv/bin/activate
       - run: 
           name: run tests
           command: |
@@ -61,8 +31,4 @@ jobs:
 workflows:
   default:
     jobs:
-      - install-requirements
-      - run-lint:
-          requires: [install-requirements]
-      # - run-tests:
-      #     requires: [install-requirements]
+      - build
