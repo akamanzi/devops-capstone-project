@@ -32,7 +32,7 @@ jobs:
       - run:
           name: activate environment
           command: |
-            ls
+            ls -la
             . venv/bin/activate
       - run: 
           name: run lint
