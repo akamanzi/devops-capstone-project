@@ -17,7 +17,7 @@ jobs:
             make install
       - save_cache:
           paths:
-            - ~/venv
+            - ./venv
           key: v1-dependencies{{ checksum "requirements.txt" }}
 
   run-lint:
@@ -32,9 +32,8 @@ jobs:
       - run:
           name: activate environment
           command: |
-            ls -la
-            ls ~/venv
-            source ~/venv/bin/activate
+            python3 -m venv venv
+            . venv/bin/activate
       - run: 
           name: run lint
           command: |
