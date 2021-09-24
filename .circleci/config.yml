@@ -15,19 +15,20 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             make install
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies{{ checksum "requirements.txt" }}
       - run: 
           name: run lint
           command: |
+            . venv/bin/activate
             make lint
       - run: 
           name: run tests
           command: |
+            . venv/bin/activate
             make test
-
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies{{ checksum "requirements.txt" }}
 workflows:
   default:
     jobs:
