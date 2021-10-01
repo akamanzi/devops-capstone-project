@@ -1,4 +1,7 @@
 version: 2.1
+orbs:
+  aws-eks: circleci/aws-eks@0.2.3
+  kubernetes: circleci/kubernetes@0.4.0
 jobs:
   build:
     docker:
@@ -32,7 +35,59 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies{{ checksum "requirements.txt" }}
+  dockerize-app:
+    machine: true
+    steps:
+      - checkout
+      - run:
+        command: |
+          ./upload_docker.sh ${DOCKER_USER} ${DOCKER_PASS} ${DOCKER_TAG}
+
+  test-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - run:
+          command: |
+            kubectl get services
+          name: Test cluster
+
+  create-deployment:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: deployment.yml
+          resource-name: deployment/udacity-capstone-deployment
 workflows:
   default:
     jobs:
       - build
+      - aws-eks/create-cluster:
+          cluster-name: udacity-capstone
+          requires:
+            - build
+      - test-cluster:
+          cluster-name: udacity-capstone
+          requires:
+            - aws-eks/create-cluster
+      - create-deployment:
+          cluster-name: udacity-capstone
+          requires:
+            - test-cluster
