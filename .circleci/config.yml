@@ -124,7 +124,7 @@ workflows:
       - test-cluster:
           cluster-name: udacity-capstone
           requires:
-            - aws-eks/create-cluster
+            - create-cluster
       - create-deployment:
           cluster-name: udacity-capstone
           requires:
