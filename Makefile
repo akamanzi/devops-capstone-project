@@ -10,6 +10,7 @@ test:
 	python -m pytest
 
 lint:
+	hadolint Dockerfile
 	pylint app.py
 
 all: install test lint
