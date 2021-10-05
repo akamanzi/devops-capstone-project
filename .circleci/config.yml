@@ -125,7 +125,24 @@ workflows:
           cluster-name: udacity-capstone
           requires:
             - create-cluster
+      - dockerize-app:
+        requires:
+          - test-cluster
       - create-deployment:
           cluster-name: udacity-capstone
           requires:
             - test-cluster
+      
+      - aws-eks/update-container-image:
+          cluster-name: udacity-capstone
+          container-image-updates: 'udacity-capstone=karnold20/udacity-capstone:${DOCKER_TAG}'
+          post-steps:
+            - kubernetes/delete-resource:
+                resource-names: udacity-capstone-deployment
+                resource-types: deployment
+                wait: true
+          record: true
+          requires:
+            - create-deployment
+            - dockerize-app
+          resource-name: deployment/nginx-deployment
