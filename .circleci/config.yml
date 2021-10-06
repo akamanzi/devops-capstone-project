@@ -41,9 +41,11 @@ jobs:
     machine: true
     steps:
       - checkout
+      - name: build and upload docker container
       - run:
-        command: |
-          ./upload_docker.sh ${DOCKER_USER} ${DOCKER_PASS} ${DOCKER_TAG}
+          command: |
+            ./run_docker.sh
+            ./upload_docker.sh ${DOCKER_USER} ${DOCKER_PASS} ${DOCKER_TAG}
   
   create-cluster:
      executor: aws-eks/python3
