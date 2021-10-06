@@ -43,6 +43,7 @@ jobs:
       - checkout
       - run:
           name: build and upload docker container
+          no_output_timeout: 30m
           command: |
             ./run_docker.sh
             ./upload_docker.sh ${DOCKER_USER} ${DOCKER_PASS} ${DOCKER_TAG}
