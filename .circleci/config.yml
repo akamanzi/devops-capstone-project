@@ -41,8 +41,8 @@ jobs:
     machine: true
     steps:
       - checkout
-      - name: build and upload docker container
       - run:
+          name: build and upload docker container
           command: |
             ./run_docker.sh
             ./upload_docker.sh ${DOCKER_USER} ${DOCKER_PASS} ${DOCKER_TAG}
